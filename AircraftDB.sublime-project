@@ -1,0 +1,15 @@
+{
+	"folders":
+	[
+		{
+			"path": "."
+		}
+	],
+	"virtualenv": "/Users/matthewgougeon/SDR/AircraftDB-Backend/virt",
+	"build_systems": [
+	  {
+	   "name": "Test",
+	   "shell_cmd": "/Users/matthewgougeon/SDR/AircraftDB-Backend/virt/bin/python Aircraft_API.py"
+	  }
+ ] 
+}

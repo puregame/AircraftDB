@@ -1,0 +1,5 @@
+db_address	= ""
+db_user		= ""
+db_name		= ""
+db_port		= ""
+db_password	= ""

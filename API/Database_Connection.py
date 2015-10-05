@@ -1,15 +1,36 @@
 import psycopg2
-import password # file for storing database connection properties
+from psycopg2 import IntegrityError
+from password import * # file for storing database connection properties
+
+print db_address
 
 connection = psycopg2.connect(host = db_address, port = db_port, database=db_name, user=db_user, password=db_password)
 cursor = connection.cursor()
 
 class DB():
 	"""docstring for DB"""
-	def __init__():
+	def __init__(self):
 		self.connection = psycopg2.connect(host = db_address, port = db_port, database=db_name, user=db_user, password=db_password)
-		self.cursor = connection.cursor()
-
+		self.cursor = self.connection.cursor()
+	
 	def newUserMessage(self, data):
-		cursor.execute("PERFORM flight_new_message(%(id)s, %(flight)s, %(altitude)s, %(speed)s, %(heading)s, %(signal)s, %(mode)s, %(lat)s, %(lon)s, %(sqk)s, %(station)s, %(time)s)"
-					, data)
+		print "putting into db"
+		print ("select flight_new_message(\'%(id)s\'::text, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, \'%(time)s\'::timestamp with time zone)"
+					% data)
+		try:
+			self.cursor.execute("select flight_new_message(%(id)s::text, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)"
+						, data)
+			self.connection.commit()
+		except Exception,e :# should check for IntegrityError but that doesn't seem to work
+			print "integrity error, rolling back"
+			self.connection.rollback();
+			self.cursor.execute("select flight_new_message(%(id)s::text, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)"
+						, data)
+			self.connection.commit()
+
+
+	def updateAircraftDescription(self, icao_hex, description):
+		print "updating aircraft description"
+		self.cursor.execute("UPDATE aircraft_spotted set user_notes=%(note)s where icao_hex=%(id)s", {'note':description, 'id':icao_hex})
+		self.connection.commit()
+		# cursor.execute("UPDATE aircraft_spotted set user_notes=%(note)s where icao_hex=%(id)s", {'note':description, 'id':icao_hex})

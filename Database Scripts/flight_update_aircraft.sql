@@ -8,7 +8,8 @@ CREATE OR REPLACE FUNCTION flight_update_aircraft(
     _alt integer,
     _speed smallint,
     _lat double precision,
-    _long double precision)
+    _long double precision,
+    _time timestamp with time zone)
   RETURNS integer AS
 $BODY$
 DECLARE
@@ -17,7 +18,7 @@ BEGIN
   flight_uuid = (SELECT session_uuid from flights_seen
         WHERE icao_hex=_icao_hex AND final_time=(SELECT max(final_time) FROM flights_seen WHERE icao_hex=_icao_hex));
         
-  UPDATE aircraft_spotted SET total_msg_recieved=total_msg_recieved+1, last_seen_at=now()
+  UPDATE aircraft_spotted SET total_msg_recieved=total_msg_recieved+1, last_seen_at=_time
           WHERE icao_hex=_icao_hex;
 
   IF NOT _flight_num = '' THEN

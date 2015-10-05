@@ -12,7 +12,8 @@ CREATE OR REPLACE FUNCTION flight_update_flight(
     _lat double precision,
     _long double precision,
     _mode text,
-    _sqk smallint)
+    _sqk smallint,
+    _time timestamp with time zone)
   RETURNS integer AS
 $BODY$
 DECLARE
@@ -21,7 +22,7 @@ BEGIN
   flight_uuid = (SELECT session_uuid from flights_seen
         WHERE icao_hex=_icao_hex AND final_time=(SELECT max(final_time) FROM flights_seen WHERE icao_hex=_icao_hex));
 
-  UPDATE flights_seen SET final_time = now(), num_messages=num_messages+1 WHERE session_uuid=flight_uuid;
+  UPDATE flights_seen SET final_time = _time, num_messages=num_messages+1 WHERE session_uuid=flight_uuid;
 
   -- check and update position 
   IF _lat != 0 AND _long != 0 THEN

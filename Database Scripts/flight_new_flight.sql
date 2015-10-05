@@ -14,14 +14,15 @@ CREATE OR REPLACE FUNCTION flight_new_flight(
     _long double precision,
     _mode text,
     _sqk smallint,
-    _stationID integer)
+    _stationID integer,
+    _time timestamp with time zone)
   RETURNS integer AS
 $BODY$
 DECLARE
 BEGIN
   
    INSERT INTO flights_seen VALUES( new_uuid, _flight_num, _icao_hex,
-          now(), now(), -- inital and final times
+          _time, _time, -- inital and final times
           0, -- dist travelled
           _heading,
           1, -- num messages

@@ -10,7 +10,8 @@ CREATE OR REPLACE FUNCTION flight_insert_message(
     _signal_strength smallint,
     _lat double precision,
     _long double precision,
-    _stationID integer)
+    _stationID integer,
+    _time timestamp with time zone)
   RETURNS integer AS
 $BODY$
 DECLARE
@@ -18,7 +19,7 @@ DECLARE
 	newuuid uuid;
 BEGIN
 	
-	INSERT INTO messages_seen VALUES (_icao_hex, newuuid, now(), st_makepoint(_long, _lat),
+	INSERT INTO messages_seen VALUES (_icao_hex, newuuid, _time, st_makepoint(_long, _lat),
 						_alt, _heading, _speed, _signal_strength, _stationID);
 	return 1;
 

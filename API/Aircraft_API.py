@@ -1,3 +1,5 @@
+
+print "test"
 from bottle import Bottle, route, run, request
 import json
 from Database_Connection import DB
@@ -5,7 +7,6 @@ from APIException import *
 app = Bottle()
 
 import datetime
-import logging
 
 connection = DB()
 
@@ -20,16 +21,24 @@ def hello():
 	except KeyError, e:
 		print "an error occured"
 		pass
+	print "test"
 	return "Hello World"
 
 @app.route('/addNote')
 def addNote():
-	print json.dumps(request.query)
+	print "adding note"
+	query=request.query
+	print query
 	try:
 		icao_hex = query["id"]
-		message = query["message"]
+		print icao_hex
+		description = query["description"]
+		print description
+		print "adding: " + description + " to id: " +icao_hex
+		connection.updateAircraftDescription(icao_hex, description)
 	except ValueError, e:
 		return "request must include id and message"
+	return "worked"
 
 @app.route('/newMessage/')
 def newMessage():
@@ -43,7 +52,7 @@ def newMessage():
 		try:
 			data["id"] = query["id"]
 			data["signal"] = query["signal"]
-			data["time_stamp"] = query["time"]
+			data["time"] = query["time"]
 			data["station"] = query["station"]
 			recievedFlags[0] = 1
 		except KeyError, e:
@@ -54,7 +63,7 @@ def newMessage():
 			recievedFlags[1]=1
 		except KeyError, e:
 			data["sqk"] = 0
-			data["mode"] = 0
+			data["mode"] = "0"
 			pass
 		try: # try to parse lat/lon
 			data["lat"] = query["lat"]
@@ -76,7 +85,7 @@ def newMessage():
 			data["flight"] = query["flight"]
 			recievedFlags[4] = 1
 		except KeyError, e:
-			data["flight"] = 0
+			data["flight"] = "0"
 			pass
 		try: # try to parse fligt number
 			data["altitude"] = query["altitude"]
@@ -86,12 +95,13 @@ def newMessage():
 			pass
 
 		# Upload to database
-
+		connection.newUserMessage(data)
 	except APIException, e:
 		return e.__str__()
 	except Exception, e:
-		return e.Value
+		print e
+		return "ERROR"
 
 	print data
-
+print "test"
 run(app, host="localhost", port="8080")

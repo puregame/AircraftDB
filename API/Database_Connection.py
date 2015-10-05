@@ -14,15 +14,12 @@ class DB():
 		self.cursor = self.connection.cursor()
 	
 	def newUserMessage(self, data):
-		print "putting into db"
-		print ("select flight_new_message(\'%(id)s\'::text, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, \'%(time)s\'::timestamp with time zone)"
-					% data)
 		try:
 			self.cursor.execute("select flight_new_message(%(id)s::text, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)"
 						, data)
 			self.connection.commit()
 		except Exception,e :# should check for IntegrityError but that doesn't seem to work
-			print "integrity error, rolling back"
+			# if an exception happens here we just need to rollback the current transaction and restart it
 			self.connection.rollback();
 			self.cursor.execute("select flight_new_message(%(id)s::text, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)"
 						, data)
@@ -30,7 +27,6 @@ class DB():
 
 
 	def updateAircraftDescription(self, icao_hex, description):
-		print "updating aircraft description"
 		self.cursor.execute("UPDATE aircraft_spotted set user_notes=%(note)s where icao_hex=%(id)s", {'note':description, 'id':icao_hex})
 		self.connection.commit()
 		# cursor.execute("UPDATE aircraft_spotted set user_notes=%(note)s where icao_hex=%(id)s", {'note':description, 'id':icao_hex})

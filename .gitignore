@@ -1,6 +1,7 @@
 .DS_Store
 *.pyc
 AircraftDB.sublime-workspace
+AircraftDB.sublime-project
 internal.md
 /virt
 

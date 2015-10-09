@@ -1,9 +1,14 @@
+CREATE DATABASE aviation;
+
+CREATE EXTENSION postgis;
+CREATE SCHEMA aviation;
+
 --*******AIRCRAFT SPOTTED TABLE*******--
 -- Table: aircraft_spotted
 
 -- DROP TABLE aircraft_spotted;
 
-CREATE TABLE aircraft_spotted
+CREATE TABLE aviation.aircraft_spotted
 (
   icao_hex text NOT NULL, -- unique ICAO hex value found in each transponder
   latest_session uuid, -- UUID of the latest flight this aircraft was spotted on
@@ -42,7 +47,7 @@ COMMENT ON COLUMN aircraft_spotted.last_position IS 'last seen position of this 
 
 -- DROP TABLE messages_seen;
 
-CREATE TABLE messages_seen
+CREATE TABLE aviation.messages_seen
 (
   icao_hex text NOT NULL, -- aircraft icao hex
   session_uuid uuid, -- uuid of the session that this message belongs to
@@ -58,23 +63,20 @@ CREATE TABLE messages_seen
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE messages_seen
+ALTER TABLE aviation.messages_seen
   OWNER TO postgres;
-COMMENT ON COLUMN messages_seen.icao_hex IS 'aircraft icao hex';
-COMMENT ON COLUMN messages_seen.session_uuid IS 'uuid of the session that this message belongs to';
-COMMENT ON COLUMN messages_seen."timestamp" IS 'time this message was recieved';
-COMMENT ON COLUMN messages_seen."position" IS 'position of aircraft at this message';
-COMMENT ON COLUMN messages_seen.altitude IS 'alt of aircraft at this message';
-
-
-
+COMMENT ON COLUMN aviation.messages_seen.icao_hex IS 'aircraft icao hex';
+COMMENT ON COLUMN aviation.messages_seen.session_uuid IS 'uuid of the session that this message belongs to';
+COMMENT ON COLUMN aviation.messages_seen."timestamp" IS 'time this message was recieved';
+COMMENT ON COLUMN aviation.messages_seen."position" IS 'position of aircraft at this message';
+COMMENT ON COLUMN aviation.messages_seen.altitude IS 'alt of aircraft at this message';
 
 --*******flights seen TABLE*******--
 -- Table: flights_seen
 
 -- DROP TABLE flights_seen;
 
-CREATE TABLE flights_seen
+CREATE TABLE aviation.flights_seen
 (
   session_uuid uuid NOT NULL,
   flight_number text,
@@ -90,26 +92,26 @@ CREATE TABLE flights_seen
   avg_alt integer,
   avg_speed smallint,
   sqk smallint,
-  stationID,
+  stationID smallint,
   CONSTRAINT flights_seen_pkey PRIMARY KEY (session_uuid)
 )
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE flights_seen
+ALTER TABLE aviation.flights_seen
   OWNER TO postgres;
-COMMENT ON TABLE flights_seen
+COMMENT ON TABLE aviation.flights_seen
   IS 'log of all flights seen by this server';
-COMMENT ON COLUMN flights_seen.distance_travelled IS 'dist in m?';
-COMMENT ON COLUMN flights_seen.avg_heading IS 'avg heading on this leg';
-COMMENT ON COLUMN flights_seen.num_messages IS 'messages in this session';
-COMMENT ON COLUMN flights_seen.path IS 'geographical path of flight (based on points recorded)';
+COMMENT ON COLUMN aviation.flights_seen.distance_travelled IS 'dist in m?';
+COMMENT ON COLUMN aviation.flights_seen.avg_heading IS 'avg heading on this leg';
+COMMENT ON COLUMN aviation.flights_seen.num_messages IS 'messages in this session';
+COMMENT ON COLUMN aviation.flights_seen.path IS 'geographical path of flight (based on points recorded)';
 
 -- Table: base_stations
 
 -- DROP TABLE base_stations;
 
-CREATE TABLE base_stations
+CREATE TABLE aviation.base_stations
 (
   station_id integer NOT NULL,
   description text,
@@ -120,9 +122,6 @@ CREATE TABLE base_stations
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE base_stations
+ALTER TABLE aviation.base_stations
   OWNER TO postgres;
-GRANT ALL ON TABLE base_stations TO postgres;
-GRANT ALL ON TABLE base_stations TO adsbupload;
-
-
+GRANT ALL ON TABLE aviation.base_stations TO postgres;

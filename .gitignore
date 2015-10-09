@@ -1,7 +1,11 @@
+# Sublime
+
+AircraftDB.sublime-workspace
+AircraftDB.sublime-project
+
 .DS_Store
 *.pyc
-AircraftDB.sublime-workspace
 internal.md
 /virt
 
-/API/password.py
+

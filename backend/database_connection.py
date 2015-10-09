@@ -1,6 +1,6 @@
 import psycopg2
 from psycopg2 import IntegrityError
-from api.password import * # file for storing database connection properties
+from password import * # file for storing database connection properties
 
 print db_address
 

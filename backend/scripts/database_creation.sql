@@ -2,6 +2,7 @@ CREATE DATABASE aviation;
 
 CREATE EXTENSION postgis;
 CREATE SCHEMA aviation;
+CREATE USER aviator WITH PASSWORD 'aviationp123';
 
 --*******AIRCRAFT SPOTTED TABLE*******--
 -- Table: aircraft_spotted

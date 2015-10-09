@@ -3,6 +3,11 @@
 AircraftDB.sublime-workspace
 AircraftDB.sublime-project
 
+# IDE
+
+*.iml
+.idea/*
+
 .DS_Store
 *.pyc
 internal.md

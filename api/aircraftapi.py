@@ -4,9 +4,11 @@ import datetime
 
 
 # Internal py files
-from Database_Connection import DB
-from APIException import *
-from APILogic import *
+
+from backend.database_connection import DB
+# from backend.database_connection import DB
+from apiexception import *
+from apilogic import *
 
 
 app = Bottle()
@@ -80,8 +82,8 @@ def newMessage():
         # Upload to database
         checker.performDBInsert(data)
         connection.newUserMessage(data)
-        print "data uploaded to DB"
-    checker.printDebug()
-    return "Data accepted"
+        return "Data accepted"
+    return "Message not put in DB, too soon"
+    
 
-run(app, host="localhost", port="8080")
+run(app, host="localhost", port="8090")

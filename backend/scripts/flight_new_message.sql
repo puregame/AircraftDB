@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION flight_new_message(
     _lat double precision,
     _long double precision,
     _sqk smallint,
-    _stationID integer,
+    _stationID smallint,
     _time timestamp with time zone)
   RETURNS integer AS
 $BODY$

@@ -1,6 +1,11 @@
 import psycopg2
 from psycopg2 import IntegrityError
 from password import * # file for storing database connection properties
+<<<<<<< HEAD
+=======
+
+print db_address
+>>>>>>> origin/colins_branch
 
 connection = psycopg2.connect(host=db_address, port=db_port, database=db_name, user=db_user, password=db_password)
 cursor = connection.cursor()

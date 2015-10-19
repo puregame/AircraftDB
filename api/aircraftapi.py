@@ -6,7 +6,6 @@ import logging
 
 # Internal py files
 from backend.database_connection import DB
-# from backend.database_connection import DB
 from apiexception import *
 from apilogic import *
 
@@ -16,7 +15,7 @@ checker = aircraftChecker()
 connection = DB()
 
 # Configure logging
-logFile="./apiLog.txt"
+logFile="./apiLog.log"
 logging.basicConfig(filename=logFile, format='%(asctime)s - %(name)s\t- %(levelname)s\t- %(message)s',level=logging.DEBUG)
 apiLog = logging.getLogger("apiLog")
 
@@ -27,6 +26,10 @@ def main_page():
 @app.route('/hello/')
 def hello():
     return "hello world"
+
+@app.route('/apiTest')
+def apiTest():
+    return "works"
 
 @app.route('/addNote')
 def addNote():

@@ -1,19 +1,24 @@
 from bottle import Bottle, route, run, request, static_file
 import json
 import datetime
+import logging
 
 
 # Internal py files
-
 from backend.database_connection import DB
 # from backend.database_connection import DB
 from apiexception import *
 from apilogic import *
 
-
+# Configure bottle
 app = Bottle()
 checker = aircraftChecker()
 connection = DB()
+
+# Configure logging
+logFile="./apiLog.txt"
+logging.basicConfig(filename=logFile, format='%(asctime)s - %(name)s\t- %(levelname)s\t- %(message)s',level=logging.DEBUG)
+apiLog = logging.getLogger("apiLog")
 
 @app.route('/')
 def main_page():
@@ -36,6 +41,7 @@ def addNote():
 
 @app.route('/newMessage/')
 def newMessage():
+    ip = request.environ.get('REMOTE_ADDR')
     query=request.query
     data = {}
     try: 
@@ -46,7 +52,7 @@ def newMessage():
             data["time"] = query["time"]
             data["station"] = query["station"]
         except KeyError, e:
-            raise APIException("Request must include aircraft ID, signal, time, and station")
+            return "Request must include aircraft ID, signal, time, and station"
         try:
             data["sqk"] = query["sqk"]
             data["mode"] = query["mode"]
@@ -77,13 +83,20 @@ def newMessage():
         return e.__str__()
     except Exception, e:
         print e
+        apiLog.error("Error in parsing request: " + str(data))
         return "Error"
     if checker.souldDBInsert(data):
         # Upload to database
         checker.performDBInsert(data)
         connection.newUserMessage(data)
+        print "Recieved valid message from: " + ip
+        apiLog.debug("Recieved valid message from: " + ip)
         return "Data accepted"
+
+    # maybe get rid of logging the too soon messages?
+    apiLog.debug("Recieved message too soon from: " + ip)
     return "Message not put in DB, too soon"
     
 
-run(app, host="localhost", port="8090")
+# listen on all network adapters on port 8090
+run(app, host="0.0.0.0", port="8090")

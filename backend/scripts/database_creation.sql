@@ -58,7 +58,7 @@ CREATE TABLE aviation.messages_seen
   heading smallint,
   speed smallint,
   signal_strength smallint,
-  stationID integer,
+  station_id integer,
   CONSTRAINT messages_pkey PRIMARY KEY (icao_hex, "timestamp")
 )
 WITH (
@@ -93,7 +93,7 @@ CREATE TABLE aviation.flights_seen
   avg_alt integer,
   avg_speed smallint,
   sqk smallint,
-  stationID smallint,
+  station_id smallint,
   CONSTRAINT flights_seen_pkey PRIMARY KEY (session_uuid)
 )
 WITH (

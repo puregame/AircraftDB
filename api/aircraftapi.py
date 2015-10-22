@@ -1,4 +1,4 @@
-from bottle import Bottle, route, run, request, static_file
+from bottle import Bottle, route, post, get, run, request, static_file
 import json
 import datetime
 import logging
@@ -42,7 +42,8 @@ def addNote():
         return "request must include id and message"
     return "worked"
 
-@app.route('/newMessage/')
+
+@post('/newMessage/')
 def newMessage():
     ip = request.environ.get('REMOTE_ADDR')
     query=request.query

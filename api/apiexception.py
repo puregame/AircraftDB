@@ -1,7 +1,7 @@
 class APIException(Exception):
     """docstring for APIException"""
-    def __init__(self, Value):
-        self.Value = Value
+    def __init__(self, value):
+        self.value = value
 
     def __str__(self):
-        return repr(self.Value)
+        return repr(self.value)

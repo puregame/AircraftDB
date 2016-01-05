@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Message</title>
+</head>
+<body>
+    <h1>New Message function</h1>
+    <p>This is the new message function of the database API. This function will insert data into the database. The request should be an HTTP POST with a set of arguments with specific user data.</p>
+    <h3>API Arguments</h3>
+    <ul>
+        <li>"id" (required): Unique identifier of aircraft, also known as ICAO hex code</li>
+        <li>"signal" (required): signal strength of message</li>
+        <li>"time" (required): timestamp of when message was recieved (timestamp with time zone) "YYYY-MM-DD HH:MM:SS.000000-TZ"</li>
+        <li>"station" (required): unique identifier of station which is sending data (integer)</li>
+        <li>"sqk": Squawk code of aircraft (integer)</li>
+        <li>"mode": Transponder mode (text)</li>
+        <li>"lat": Lattitude of aircraft (double precision)</li>
+        <li>"lon": Longitude of aircraft (double precision)</li>
+        <li>"speed": Speed of aircraft(smallint)</li>
+        <li>"heading": Heading of aircraft (integer)</li>
+        <li>"flight": Flight number or aircraft callsign (text)</li>
+        <li>"altitude: altitude of aircraft (integer)</li>
+    </ul>
+
+    <p>Example query: /newMessage/id=C0635F&flight=ACA150&altitude=0&speed=0&heading=0&signal=7&mode=a&lat=0.000000&lon=0.000000&station=1&time=2015-10-17+20:14:2.000000-05</p>
+</body>
+</html>
+
+

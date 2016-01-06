@@ -1,9 +1,9 @@
--- Function: flight_insert_message(text, integer, smallint, smallint, smallint, double precision, double precision)
+-- Function: flight_insert_message(integer, integer, smallint, smallint, smallint, double precision, double precision)
 
--- DROP FUNCTION flight_insert_message(text, integer, smallint, smallint, smallint, double precision, double precision);
+-- DROP FUNCTION flight_insert_message(integer, integer, smallint, smallint, smallint, double precision, double precision);
 
 CREATE OR REPLACE FUNCTION flight_insert_message(
-    _icao_hex text,
+    _icao_hex integer,
     _alt integer,
     _speed smallint,
     _heading smallint,

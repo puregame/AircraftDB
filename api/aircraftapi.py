@@ -77,8 +77,7 @@ def setStation():
         apiLog.error("Error in parsing request: " + str(data))
         return "Error"
     print "connectig!"
-    a = connection.newStation(data);
-    print a;
+    a = connection.newStation(data)
     if a:
         return "station updated"
     else:
@@ -94,7 +93,8 @@ def newMessage():
     try: 
         # try to parse request 
         try:
-            data["id"] = query["id"]#int(query["id"], 16)
+            data["id"] = int(query["id"], 16)#int(query["id"], 16)
+                # opposite of this is str(hex(number))[2:]
             data["signal"] = query["signal"]
             data["time"] = query["time"]
             data["station"] = query["station"]

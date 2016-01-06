@@ -1,10 +1,10 @@
--- Function: flight_new_flight(uuid, text, text, integer, smallint, smallint, smallint, double precision, double precision, text, smallint)
+-- Function: flight_new_flight(uuid, integer, text, integer, smallint, smallint, smallint, double precision, double precision, text, smallint)
 
--- DROP FUNCTION flight_new_flight(uuid, text, text, integer, smallint, smallint, smallint, double precision, double precision, text, smallint);
+-- DROP FUNCTION flight_new_flight(uuid, integer, text, integer, smallint, smallint, smallint, double precision, double precision, text, smallint);
 
 CREATE OR REPLACE FUNCTION flight_new_flight(
     new_uuid uuid,
-    _icao_hex text,
+    _icao_hex integer,
     _flight_num text,
     _alt integer,
     _speed smallint,

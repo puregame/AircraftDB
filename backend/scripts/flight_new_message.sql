@@ -1,9 +1,9 @@
--- Function: flight_new_message(text, text, integer, smallint, smallint, smallint, text, double precision, double precision, smallint)
+-- Function: flight_new_message(integer, text, integer, smallint, smallint, smallint, text, double precision, double precision, smallint)
 
--- DROP FUNCTION flight_new_message(text, text, integer, smallint, smallint, smallint, text, double precision, double precision, smallint);
+-- DROP FUNCTION flight_new_message(integer, text, integer, smallint, smallint, smallint, text, double precision, double precision, smallint);
 
 CREATE OR REPLACE FUNCTION flight_new_message(
-    _icao_hex text,
+    _icao_hex integer,
     _flight_num text,
     _alt integer,
     _speed smallint,
@@ -26,13 +26,13 @@ BEGIN
 		-- Aircraft does not exsist in DB, must make flight for it aswell
         IF _lat != 0 AND _long != 0 THEN
 		    INSERT INTO aircrafts VALUES (_icao_hex,
-							newuuid, _flight_num, _time, _alt, _speed, 
+							newuuid, _flight_num, _time, _stationID, _alt, _speed, 
 							st_makepoint(_long, _lat), 1, -- messages recieved
 							1 -- total sessions
 							);
         ELSE
             INSERT INTO aircrafts VALUES (_icao_hex,
-                            newuuid, _flight_num, _time, _alt, _speed, 
+                            newuuid, _flight_num, _time, _stationID, _alt, _speed, 
                             NULL, 1, -- messages recieved
                             1 -- total sessions
                             );
@@ -49,16 +49,16 @@ BEGIN
 	ELSE 
 		UPDATE aircrafts SET total_sessions=total_sessions+1
 			WHERE icao_hex=_icao_hex;
-		perform flight_update_aircraft(_icao_hex, _flight_num, _alt, _speed, _lat, _long, _time);
+		perform flight_update_aircraft(_icao_hex, _flight_num, _alt, _speed, _lat, _long, _stationID, _time);
 		perform flight_new_flight(newuuid, _icao_hex, _flight_num, _alt, _speed, _heading, _signal_strength, _lat, _long, _mode, _sqk, _stationID, _time);
 	END IF;
 	IF _alt=0 AND _speed=0 AND _heading=0 AND _lat=0.0 AND _long=0.0 THEN
 		-- if this packet has nothing useful in it don't put it into the db, just update the aircraft and flight for last seen time
 		return 1;
 	END IF;
+    -- we always want to insert a new message
 	perform flight_insert_message(_icao_hex, _alt, _speed, _heading, _signal_strength, _lat, _long, _stationID, _time);
 	return 1;
-	-- we always want to insert a new message
 
 END;
 $BODY$

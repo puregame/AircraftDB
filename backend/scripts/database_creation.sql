@@ -11,15 +11,16 @@ CREATE USER aviator WITH PASSWORD 'aviationp123';
 
 CREATE TABLE aviation.aircrafts
 (
-  icao_hex text NOT NULL, -- unique ICAO hex value found in each transponder
+  icao_hex integer NOT NULL, -- unique ICAO hex value found in each transponder
   latest_session uuid, -- UUID of the latest flight this aircraft was spotted on
   last_flight_number text,
   last_seen_at timestamp with time zone, -- when did we last see this aircraft?
+  last_station integer,
   avg_alt integer, -- average altitude this aircraft has been observed to fly
   avg_speed integer, -- avg speed seen by this plane
   last_position geometry, -- last seen position of this aircraft
   total_msg_recieved bigint,
-  total_sessions integer,
+  total_flights integer,
   user_notes text,
   CONSTRAINT aircrafts_pkey PRIMARY KEY (icao_hex)
 )
@@ -50,7 +51,7 @@ COMMENT ON COLUMN aviation.aircrafts.last_position IS 'last seen position of thi
 
 CREATE TABLE aviation.messages
 (
-  icao_hex text NOT NULL, -- aircraft icao hex
+  icao_hex integer NOT NULL, -- aircraft icao hex
   session_uuid uuid, -- uuid of the session that this message belongs to
   "timestamp" timestamp with time zone NOT NULL, -- time this message was recieved
   "position" geometry, -- position of aircraft at this message
@@ -81,7 +82,7 @@ CREATE TABLE aviation.flights
 (
   session_uuid uuid NOT NULL,
   flight_number text,
-  icao_hex text,
+  icao_hex integer NOT NULL,
   initial_time timestamp with time zone,
   final_time timestamp with time zone,
   distance_travelled bigint, -- dist in m?

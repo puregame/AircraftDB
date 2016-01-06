@@ -3,7 +3,7 @@
 -- DROP FUNCTION flight_update_flight(text, text, integer, smallint, smallint, smallint, double precision, double precision, text, smallint);
 
 CREATE OR REPLACE FUNCTION flight_update_flight(
-    _icao_hex text,
+    _icao_hex integer,
     _flight_num text,
     _alt integer,
     _speed smallint,

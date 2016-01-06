@@ -44,12 +44,23 @@ class DB:
 
     def getAircraft(self, icao_id):
         #icao ID as integer
-        self.cursor.execute("select last_flight_number, last_seen_at, avg_alt, avg_speed, st_asgeojson(last_position), last_station, total_flights, user_notes from aircrafts")
+        self.cursor.execute("select last_flight_number, last_seen_at, avg_alt, avg_speed, st_asgeojson(last_position), last_station, total_flights, user_notes from aircrafts WHERE icao_id = %s", icao_id)
+        self.apiLog.debug("select last_flight_number, last_seen_at, avg_alt, avg_speed, st_asgeojson(last_position), last_station, total_flights, user_notes from aircrafts WHERE icao_id = %s", icao_id)
         # jsonify response
         data = self.cursor.fetchall();
         response = []
         for i in data:
-            response.append({"last_flight_number":i[0], "last_seen_at":self.asiso(i[1]), "avg_alt":i[2], "avg_speed":i[3], "last_position":i[4], "last_station":i[5], "total_flights":i[6], "user_notes":i[7]})
+            response.append({"icao_id":str(hex(icao_id))[2:], "last_flight_number":i[0], "last_seen_at":self.asiso(i[1]), "avg_alt":i[2], "avg_speed":i[3], "last_position":i[4], "last_station":i[5], "total_flights":i[6], "user_notes":i[7]})
+        return response;
+
+    def getFlights(self, icao_id):
+        self.cursor.execute("select from flights WHERE icao_id = %s", icao_id)
+        self.apiLog.debug("select last_flight_number, last_seen_at, avg_alt, avg_speed, st_asgeojson(last_position), last_station, total_flights, user_notes from aircrafts WHERE icao_id = %s", icao_id)
+        # jsonify response
+        data = self.cursor.fetchall();
+        response = []
+        for i in data:
+            response.append({"icao_id":str(hex(i[8]))[2:], "last_flight_number":i[0], "last_seen_at":self.asiso(i[1]), "avg_alt":i[2], "avg_speed":i[3], "last_position":i[4], "last_station":i[5], "total_flights":i[6], "user_notes":i[7]})
         return response;
 
     def newUserMessage(self, data):
@@ -65,7 +76,7 @@ class DB:
                         , data)
             self.connection.commit()
 
-    def updateAircraftDescription(self, icao_hex, description):
-        self.cursor.execute("UPDATE aircraft_spotted set user_notes=%(note)s where icao_hex=%(id)s", {'note':description, 'id':icao_hex})
+    def updateAircraftDescription(self, icao_id, description):
+        self.cursor.execute("UPDATE aircraft_spotted set user_notes=%(note)s where icao_id=%(id)s", {'note':description, 'id':icao_id})
         self.connection.commit()
-        # cursor.execute("UPDATE aircraft_spotted set user_notes=%(note)s where icao_hex=%(id)s", {'note':description, 'id':icao_hex})
+        # cursor.execute("UPDATE aircraft_spotted set user_notes=%(note)s where icao_id=%(id)s", {'note':description, 'id':icao_id})

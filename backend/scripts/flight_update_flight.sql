@@ -1,7 +1,3 @@
--- Function: flight_update_flight(text, text, integer, smallint, smallint, smallint, double precision, double precision, text, smallint)
-
--- DROP FUNCTION flight_update_flight(text, text, integer, smallint, smallint, smallint, double precision, double precision, text, smallint);
-
 CREATE OR REPLACE FUNCTION flight_update_flight(
     _icao_hex integer,
     _flight_num text,
@@ -20,7 +16,7 @@ DECLARE
   flight_uuid uuid;
 BEGIN
   flight_uuid = (SELECT session_uuid from flights
-        WHERE icao_hex = _icao_hex AND final_time = (SELECT max(final_time) FROM flights WHERE icao_hex = _icao_hex));
+        WHERE icao_id = _icao_hex AND final_time = (SELECT max(final_time) FROM flights WHERE icao_id = _icao_hex));
 
   UPDATE flights SET final_time = _time, num_messages = num_messages+1 WHERE session_uuid=flight_uuid;
 
@@ -79,5 +75,5 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION flight_update_flight(text, text, integer, smallint, smallint, smallint, double precision, double precision, text, smallint)
+ALTER FUNCTION flight_update_flight(integer, text, integer, smallint, smallint, smallint, double precision, double precision, text, smallint, timestamp with time zone)
   OWNER TO postgres;

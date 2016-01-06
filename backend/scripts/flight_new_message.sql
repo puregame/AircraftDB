@@ -1,7 +1,3 @@
--- Function: flight_new_message(integer, text, integer, smallint, smallint, smallint, text, double precision, double precision, smallint)
-
--- DROP FUNCTION flight_new_message(integer, text, integer, smallint, smallint, smallint, text, double precision, double precision, smallint);
-
 CREATE OR REPLACE FUNCTION flight_new_message(
     _icao_hex integer,
     _flight_num text,
@@ -13,7 +9,7 @@ CREATE OR REPLACE FUNCTION flight_new_message(
     _lat double precision,
     _long double precision,
     _sqk smallint,
-    _stationID smallint,
+    _stationID integer,
     _time timestamp with time zone)
   RETURNS integer AS
 $BODY$
@@ -22,7 +18,7 @@ DECLARE
 	newuuid uuid;
 BEGIN
 	newuuid = md5(random()::text || clock_timestamp()::text)::uuid;
-	IF NOT exists(SELECT 1 FROM aircrafts WHERE aircrafts.icao_hex = _icao_hex) THEN
+	IF NOT exists(SELECT 1 FROM aircrafts WHERE icao_id = _icao_hex) THEN
 		-- Aircraft does not exsist in DB, must make flight for it aswell
         IF _lat != 0 AND _long != 0 THEN
 		    INSERT INTO aircrafts VALUES (_icao_hex,
@@ -39,16 +35,16 @@ BEGIN
         END IF;
 
 		perform flight_new_flight(newuuid, _icao_hex, _flight_num, _alt, _speed, _heading, _signal_strength, _lat, _long, _mode, _sqk, _stationID, _time);
-	ELSIF exists(SELECT 1 from flights WHERE flights.icao_hex = _icao_hex AND final_time=(SELECT max(final_time) FROM flights WHERE icao_hex=_icao_hex)) AND
+	ELSIF exists(SELECT 1 from flights WHERE icao_id = _icao_hex AND final_time=(SELECT max(final_time) FROM flights WHERE icao_id=_icao_hex)) AND
 							(age(_time, final_time) < '10 minutes'::interval) from flights where final_time = (SELECT max(final_time)
-								FROM flights WHERE icao_hex=_icao_hex)THEN
+								FROM flights WHERE icao_id=_icao_hex)THEN
 		-- this message is part of a current flight
 		perform flight_update_flight(_icao_hex, _flight_num, _alt, _speed, _heading, _signal_strength, _lat, _long,_mode, _sqk, _time);
-		perform flight_update_aircraft(_icao_hex, _flight_num, _alt, _speed, _lat, _long, _time);
+		perform flight_update_aircraft(_icao_hex, _flight_num, _alt, _speed, _lat, _long, _stationID, _time);
 	-- if none of these a new flight needs to be created
 	ELSE 
 		UPDATE aircrafts SET total_sessions=total_sessions+1
-			WHERE icao_hex=_icao_hex;
+			WHERE icao_id=_icao_hex;
 		perform flight_update_aircraft(_icao_hex, _flight_num, _alt, _speed, _lat, _long, _stationID, _time);
 		perform flight_new_flight(newuuid, _icao_hex, _flight_num, _alt, _speed, _heading, _signal_strength, _lat, _long, _mode, _sqk, _stationID, _time);
 	END IF;
@@ -64,5 +60,5 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION flight_new_message(text, text, integer, smallint, smallint, smallint, text, double precision, double precision, smallint)
+ALTER FUNCTION flight_new_message(integer, text, integer, smallint, smallint, smallint, text, double precision, double precision, smallint, integer, timestamp with time zone)
   OWNER TO postgres;

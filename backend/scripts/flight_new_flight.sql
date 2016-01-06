@@ -1,7 +1,3 @@
--- Function: flight_new_flight(uuid, integer, text, integer, smallint, smallint, smallint, double precision, double precision, text, smallint)
-
--- DROP FUNCTION flight_new_flight(uuid, integer, text, integer, smallint, smallint, smallint, double precision, double precision, text, smallint);
-
 CREATE OR REPLACE FUNCTION flight_new_flight(
     new_uuid uuid,
     _icao_hex integer,
@@ -45,7 +41,7 @@ BEGIN
           NULL, -- point is null
           _mode,
           _alt,
-          _speed, _sqk, _stationID, arr_alt;
+          _speed, _sqk, _stationID, arr_alt);
   END IF;
   return 1;
 
@@ -53,5 +49,5 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION flight_new_flight(uuid, text, text, integer, smallint, smallint, smallint, double precision, double precision, text, smallint)
+ALTER FUNCTION flight_new_flight(uuid, integer, text, integer, smallint, smallint, smallint, double precision, double precision, text, smallint, integer, timestamp with time zone)
   OWNER TO postgres;

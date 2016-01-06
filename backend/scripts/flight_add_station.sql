@@ -1,7 +1,3 @@
--- Function: flight_add_station(integer, text, double precision, double precision)
-
--- DROP FUNCTION flight_add_station(integer, text, double precision, double precision);
-
 CREATE OR REPLACE FUNCTION flight_add_station(
     _id integer,
     _description text,

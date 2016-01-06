@@ -57,9 +57,17 @@ def addNote():
     return "worked"
 
 @app.post('/getStations/')
+@app.post('/getStations')
 def getStations():
     response.content_type = 'application/json'
     return dumps(connection.getStations())
+
+@app.post('/getAircraft/')
+@app.post('/getAircraft')
+def getAircraft():
+    query = request.query
+    response.content_type = 'application/json'
+    return dumps(connection.getAircraft(int(query["id"], 16)));
 
 @app.post('/setStation/')
 @app.post('/setStation')
@@ -136,12 +144,10 @@ def newMessage():
         # Upload to database
         checker.performDBInsert(data)
         connection.newUserMessage(data)
-        print "\tRecieved valid message from: " + ip
         apiLog.debug("Recieved valid message from: " + ip)
         return "Data accepted"
 
     # maybe get rid of logging the too soon messages?
-    apiLog.debug("Recieved message too soon from: " + ip)
     return "Message not put in DB, too soon"
     
 

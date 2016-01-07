@@ -63,7 +63,7 @@ class DB:
 
         # jsonify response
         data = self.cursor.fetchall();
-        response = [{"icao_id":str(hex(icao_id))[2:]}]
+        response = [{"icao_id":str(hex(icao_id))[2:], "length":len(data)}]
         for i in data:
             response.append({"flight_number":i[0], "initial_time":self.asiso(i[1]), "final_time":self.asiso(i[2]), "avg_heading":i[3], "num_messages":i[4], "path":i[5], "avg_altitude":i[6], "avg_speed":i[7], "sqk":i[8], "station_id":i[9]})
         return response;

@@ -43,7 +43,7 @@ BEGIN
 		perform flight_update_aircraft(_icao_hex, _flight_num, _alt, _speed, _lat, _long, _stationID, _time);
 	-- if none of these a new flight needs to be created
 	ELSE 
-		UPDATE aircrafts SET total_sessions=total_sessions+1
+		UPDATE aircrafts SET total_flights=total_flights+1
 			WHERE icao_id=_icao_hex;
 		perform flight_update_aircraft(_icao_hex, _flight_num, _alt, _speed, _lat, _long, _stationID, _time);
 		perform flight_new_flight(newuuid, _icao_hex, _flight_num, _alt, _speed, _heading, _signal_strength, _lat, _long, _mode, _sqk, _stationID, _time);

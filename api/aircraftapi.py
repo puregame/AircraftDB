@@ -69,6 +69,13 @@ def getAircraft():
     response.content_type = 'application/json'
     return dumps(connection.getAircraft(int(query["id"], 16)));
 
+@app.post('/getFlights/')
+@app.post('/getFlights')
+def getFlights():
+    query = request.query
+    response.content_type = 'application/json'
+    return dumps(connection.getFlights(int(query["id"], 16)));
+
 @app.post('/setStation/')
 @app.post('/setStation')
 def setStation():

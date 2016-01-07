@@ -53,12 +53,17 @@ class DB:
             response.append({"icao_id":str(hex(icao_id))[2:], "last_flight_number":i[0], "last_seen_at":self.asiso(i[1]), "avg_alt":i[2], "avg_speed":i[3], "last_position":i[4], "last_station":i[5], "total_flights":i[6], "user_notes":i[7]})
         return response;
 
-    def getFlights(self, icao_id):
-        self.cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id from flights WHERE icao_id = %s", [icao_id])
-        self.apiLog.debug("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id from flights WHERE icao_id = %s", [icao_id])
+    def getFlights(self, icao_id, max_results):
+        if max_results == 0:
+            self.cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id from flights WHERE icao_id = %s", [icao_id])
+            self.apiLog.debug("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id from flights WHERE icao_id = %s", [icao_id])
+        else:
+            self.cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id from flights WHERE icao_id = %s LIMIT %s", [icao_id, max_results])
+            self.apiLog.debug("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id from flights WHERE icao_id = %s LIMIT %s", [icao_id, max_results])
+
         # jsonify response
         data = self.cursor.fetchall();
-        response = []
+        response = [{"icao_id":str(hex(icao_id))[2:]}]
         for i in data:
             response.append({"flight_number":i[0], "initial_time":self.asiso(i[1]), "final_time":self.asiso(i[2]), "avg_heading":i[3], "num_messages":i[4], "path":i[5], "avg_altitude":i[6], "avg_speed":i[7], "sqk":i[8], "station_id":i[9]})
         return response;

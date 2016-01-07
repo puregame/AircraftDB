@@ -37,6 +37,16 @@ def getSationsStatic():
 def getSationsStatic():
     return static_file('setStation.html', root='html')
 
+@app.route('/getAircraft/')
+@app.route('/getAircraft')
+def getSationsStatic():
+    return static_file('getAircraft.html', root='html')
+
+@app.route('/getFlights/')
+@app.route('/getFlights')
+def getSationsStatic():
+    return static_file('getFlights.html', root='html')
+
 @app.route("/newMessage")
 @app.route("/newMessage/")
 def newMessageGet():
@@ -74,7 +84,11 @@ def getAircraft():
 def getFlights():
     query = request.query
     response.content_type = 'application/json'
-    return dumps(connection.getFlights(int(query["id"], 16)));
+    try:
+        max_results = query["max_results"]
+     except Exception, e:
+        max_results = 0
+    return dumps(connection.getFlights(int(query["id"], 16), max_results))
 
 @app.post('/setStation/')
 @app.post('/setStation')

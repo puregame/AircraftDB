@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <h1>Get List of attributes about an aircraft</h1>
+    <p>This function will get a list of attributes about an aircraft, results are returned as a json format with average altitude, total flights seen, latest station which saw this plane, average speed, last seen at time, last position, last flight number, and some user notes</p>
+    <h3>API Arguments</h3>
+    <ul>
+        <li>"id" (Required): Aircraft ICAO identifier, 21 bit hex code</li>
+    </ul>
+
+    <p>Example query: /getAircraft?id=C06359 (Must be a POST HTTP request)</p>
+</head>
+<body>
+    
+</body>
+</html>
+
+"avg_alt": 0,
+    "icao_id": "c06359",
+    "total_flights": 1,
+    "last_station": 1,
+    "user_notes": null,
+    "avg_speed": 0,
+    "last_seen_at": "2016-01-06T17:05:36.000015-05:00",
+    "last_position": null,
+    "last_flight_number": ""

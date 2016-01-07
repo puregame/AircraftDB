@@ -58,8 +58,8 @@ class DB:
             self.cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id from flights WHERE icao_id = %s", [icao_id])
             self.apiLog.debug("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id from flights WHERE icao_id = %s", [icao_id])
         else:
-            self.cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id from flights WHERE icao_id = %s LIMIT %s", [icao_id, max_results])
-            self.apiLog.debug("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id from flights WHERE icao_id = %s LIMIT %s", [icao_id, max_results])
+            self.cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id from flights WHERE icao_id = %s LIMIT %s", [icao_id],[max_results])
+            self.apiLog.debug("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id from flights WHERE icao_id = %s LIMIT %s", [icao_id],[max_results])
 
         # jsonify response
         data = self.cursor.fetchall();

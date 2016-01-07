@@ -86,7 +86,7 @@ def getFlights():
     response.content_type = 'application/json'
     try:
         max_results = query["max_results"]
-     except Exception, e:
+    except Exception, e:
         max_results = 0
     return dumps(connection.getFlights(int(query["id"], 16), max_results))
 

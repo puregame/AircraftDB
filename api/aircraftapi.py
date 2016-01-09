@@ -82,6 +82,17 @@ def getStations():
     response.content_type = 'application/json'
     return dumps(connection.getStations())
 
+@app.get('/lastTimeFromStation/')
+@app.get('/lastTimeFromStation')
+def lastTimeFromSta():
+    query = request.query
+    try:
+        station_id = query["station_id"]
+        return connection.lastTimeFromStation(station_id).isoformat()
+    except Exception, e:
+        return e.message
+       # return "Request must contain a station"
+
 @app.get('/crossRef/')
 @app.get('/crossRef')
 def crossRef():

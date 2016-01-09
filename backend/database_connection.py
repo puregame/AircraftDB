@@ -40,6 +40,7 @@ class DB:
             return {"icao_id":str(hex((data[0][0])))[2:], "registration":data[1], "type":data[2], "long_description":data[3]}
         except IndexError:
             return -1
+
     def crossRefCallsign(self, callsign):
         try:
             self.cursor.execute("select * from icao24plus_new where registration = %s", [callsign])
@@ -56,6 +57,13 @@ class DB:
         for i in data:
             response.append({"id":i[0], "description":i[1], "position":i[2], "date_added":self.asiso(i[3])})
         return response;
+
+    def lastTimeFromStation(self, station_id):
+        self.cursor.execute("select timestamp from messages where station_id = %s order by timestamp desc limit 1", [station_id])
+        # jsonify response
+        data = self.cursor.fetchall();
+        self.apiLog.debug(data[0][0])
+        return data[0][0];
 
     def getAircraft(self, icao_id):
         #icao ID as integer

@@ -34,12 +34,19 @@ class DB:
         return obj.isoformat() if hasattr(obj, 'isoformat') else obj
         
     def crossRefID(self, _id):
-        self.cursor.execute("select * from icao24plus_new where icao_hex = %s", _id)
-        return self.cursor.fetchall()
-
+        try:
+            self.cursor.execute("select * from icao24plus_new where icao_hex = %s", [_id])
+            data = self.cursor.fetchall()
+            return {"icao_id":str(hex((data[0][0])))[2:], "registration":data[1], "type":data[2], "long_description":data[3]}
+        except IndexError:
+            return -1
     def crossRefCallsign(self, callsign):
-        self.cursor.execute("select * from icao24plus_new where registration = %s", callsign)
-        return self.cursor.fetchall()
+        try:
+            self.cursor.execute("select * from icao24plus_new where registration = %s", [callsign])
+            data = self.cursor.fetchall()[0]
+            return {"icao_id":str(hex((data[0])))[2:], "registration":data[1], "type":data[2], "long_description":data[3]}
+        except IndexError:
+            return -1
 
     def getStations(self):
         self.cursor.execute("select station_id, description, st_asgeojson(position), added_on from stations")

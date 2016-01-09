@@ -86,17 +86,26 @@ def getStations():
 @app.get('/crossRef')
 def crossRef():
     query = request.query
-    response.content_type = 'application/json'
     try:
         icao_id = query["icao_id"]
         apiLog.debug("trying to get icao_id: " + str(icao_id))
-        return dumps(connection.crossRefID(int(icao_id, 16)))
+        db_response = connection.crossRefID(int(icao_id, 16))
+        if db_response != -1:
+            response.content_type = 'application/json'
+            return dumps(db_response);
+        else:
+            return "Error: icao ID not found!"
     except Exception, e:
         pass
     try:
         callsign = query["callsign"]
         apiLog.debug("trying to get callsign: " + str(callsign))
-        return dumps(connection.crossRefCallsign(callsign))
+        db_response = connection.crossRefCallsign(callsign)
+        if db_response != -1:
+            response.content_type = 'application/json'
+            return dumps(db_response);
+        else:
+            return "Error: callsign not found!"
     except Exception, e:
         pass
     return "ERROR: request must contain either icao_id or callsign"

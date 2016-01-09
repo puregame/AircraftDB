@@ -33,6 +33,14 @@ class DB:
     def asiso(self, obj):
         return obj.isoformat() if hasattr(obj, 'isoformat') else obj
         
+    def crossRefID(self, _id):
+        self.cursor.execute("select * from icao24plus_new where icao_hex = %s", _id)
+        return self.cursor.fetchall()
+
+    def crossRefCallsign(self, callsign):
+        self.cursor.execute("select * from icao24plus_new where registration = %s", callsign)
+        return self.cursor.fetchall()
+
     def getStations(self):
         self.cursor.execute("select station_id, description, st_asgeojson(position), added_on from stations")
         # jsonify response

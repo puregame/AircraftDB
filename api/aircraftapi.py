@@ -27,6 +27,11 @@ def main_page():
 def addNoteGet():
     return static_file('addNote.html', root='html')
 
+@app.route('/help/crossRef')
+@app.route('/help/crossRef/')
+def crossRef():
+    return static_file('crossRef.html', root='html')
+
 @app.route('/help/getStations/')
 @app.route('/help/getStations')
 def getSationsStatic():
@@ -76,6 +81,23 @@ def addNote():
 def getStations():
     response.content_type = 'application/json'
     return dumps(connection.getStations())
+
+@app.get('/crossRef/')
+@app.get('/crossRef')
+def crossRef():
+    query = request.query
+    response.content_type = 'application/json'
+    try:
+        icao_id = query["icao_id"]
+        return dumps(connection.crossRefID(int(icao_id, 16)))
+    except Exception, e:
+        pass
+    try:
+        callsign = query["callsign"]
+        return dumps(connection.crossRefCallsign(callsign))
+    except Exception, e:
+        pass
+    return "ERROR: request must contain either icao_id or callsign"
 
 @app.get('/getAircraft/')
 @app.get('/getAircraft')

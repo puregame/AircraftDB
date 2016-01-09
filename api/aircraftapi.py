@@ -89,11 +89,13 @@ def crossRef():
     response.content_type = 'application/json'
     try:
         icao_id = query["icao_id"]
+        apiLog.debug("trying to get icao_id: " + str(icao_id))
         return dumps(connection.crossRefID(int(icao_id, 16)))
     except Exception, e:
         pass
     try:
         callsign = query["callsign"]
+        apiLog.debug("trying to get callsign: " + str(callsign))
         return dumps(connection.crossRefCallsign(callsign))
     except Exception, e:
         pass

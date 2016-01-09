@@ -22,33 +22,38 @@ def main_page():
     return static_file('index.html', root='html')
 
 ######## setup for static pages ############
-@app.route('/addNote')
-@app.route('/addNote/')
+@app.route('/help/addNote')
+@app.route('/help/addNote/')
 def addNoteGet():
     return static_file('addNote.html', root='html')
 
-@app.route('/getStations/')
-@app.route('/getStations')
+@app.route('/help/getStations/')
+@app.route('/help/getStations')
 def getSationsStatic():
     return static_file('getStations.html', root='html')
 
-@app.route('/setStation/')
-@app.route('/setStation')
+@app.route('/help/setStation/')
+@app.route('/help/setStation')
 def getSationsStatic():
     return static_file('setStation.html', root='html')
 
-@app.route('/getAircraft/')
-@app.route('/getAircraft')
+@app.route('/help/getAircraft/')
+@app.route('/help/getAircraft')
 def getSationsStatic():
     return static_file('getAircraft.html', root='html')
 
-@app.route('/getFlights/')
-@app.route('/getFlights')
+@app.route('/help/getFlights/')
+@app.route('/help/getFlights')
 def getSationsStatic():
     return static_file('getFlights.html', root='html')
 
-@app.route("/newMessage")
-@app.route("/newMessage/")
+@app.route('/help/getRecentFlights/')
+@app.route('/help/getRecentFlights')
+def getSationsStatic():
+    return static_file('getRecentFlights.html', root='html')
+
+@app.route("/help/newMessage")
+@app.route("/help/newMessage/")
 def newMessageGet():
     return static_file('newMessage.html', root='html')
 
@@ -66,21 +71,21 @@ def addNote():
         return "request must include id and message"
     return "worked"
 
-@app.post('/getStations/')
-@app.post('/getStations')
+@app.get('/getStations/')
+@app.get('/getStations')
 def getStations():
     response.content_type = 'application/json'
     return dumps(connection.getStations())
 
-@app.post('/getAircraft/')
-@app.post('/getAircraft')
+@app.get('/getAircraft/')
+@app.get('/getAircraft')
 def getAircraft():
     query = request.query
     response.content_type = 'application/json'
     return dumps(connection.getAircraft(int(query["id"], 16)));
 
-@app.post('/getFlights/')
-@app.post('/getFlights')
+@app.get('/getFlights/')
+@app.get('/getFlights')
 def getFlights():
     query = request.query
     response.content_type = 'application/json'
@@ -89,6 +94,25 @@ def getFlights():
     except Exception, e:
         max_results = 0
     return dumps(connection.getFlights(int(query["id"], 16), max_results))
+
+@app.get('/getRecentFlights/')
+@app.get('/getRecentFlights')
+def getRecentFlights():
+    query = request.query
+    response.content_type = 'application/json'
+    try:
+        max_results = query["max_results"]
+    except Exception, e:
+        max_results = 0
+    try:
+        station_id = query["station_id"]
+    except Exception, e:
+        station_id = 0
+    try:
+        max_time = query["max_time"]
+    except Exception, e:
+        max_time = 10
+    return dumps(connection.getRecentFlights(int(max_results), station_id, max_time))
 
 @app.post('/setStation/')
 @app.post('/setStation')

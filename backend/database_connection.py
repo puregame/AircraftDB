@@ -4,7 +4,7 @@ from psycopg2 import IntegrityError
 from password import * # file for storing database connection properties
 import logging
 import json
-import datetime
+from datetime import datetime
 localLog = logging.getLogger("database")
 
 class DB:
@@ -68,6 +68,28 @@ class DB:
             response.append({"flight_number":i[0], "initial_time":self.asiso(i[1]), "final_time":self.asiso(i[2]), "avg_heading":i[3], "num_messages":i[4], "path":i[5], "avg_altitude":i[6], "avg_speed":i[7], "sqk":i[8], "station_id":i[9]})
         return response;
 
+    def getRecentFlights(self, max_results, station_id, max_time):
+        ###### THIS IS NOT 
+
+        # should make postgres function to handle this, but function with TABLE() return type ends up as rows of strings in python, much less than ideal
+        ttime = str(max_time)+" minute"
+        if station_id < 1:
+            if max_results < 1:
+                self.cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id, icao_id from flights WHERE final_time > (now()-%s::interval)", [ttime])
+            else:
+                self.cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id, icao_id from flights WHERE final_time>(now()-%s::interval) limit %s", [ttime, max_results])
+        elif max_results < 1:
+            self.cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id, icao_id from flights WHERE final_time>(now()-%s::interval) AND station_id = %s", [ttime, station_id])
+        else:
+            self.cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id, icao_id from flights WHERE final_time>(now()-%s::interval) AND station_id = %s limit %s", [ttime, station_id, max_results])
+        # jsonify response
+        data = self.cursor.fetchall();
+
+        response = [{"length":len(data)}]
+        for i in data:
+            response.append({"flight_number":i[0], "initial_time":self.asiso(i[1]), "final_time":self.asiso(i[2]), "avg_heading":i[3], "num_messages":i[4], "path":i[5], "avg_altitude":i[6], "avg_speed":i[7], "sqk":i[8], "station_id":i[9], "icao_id":str(hex(i[10]))[2:]})
+        return response;
+
     def newUserMessage(self, data):
         try:
             self.cursor.execute("select flight_new_message(%(id)s::integer, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)"
@@ -75,7 +97,7 @@ class DB:
             self.connection.commit()
         except Exception,e :# should check for IntegrityError but that doesn't seem to work
             # if an exception happens here we just need to rollback the current transaction and restart it
-            self.apiLog.debug("select flight_new_message(%(id)s::integer, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)")
+            self.apiLog.error("** Couldn't insert into db! ** select flight_new_message(%(id)s::integer, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)")
             self.connection.rollback()
             self.cursor.execute("select flight_new_message(%(id)s::integer, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)"
                         , data)

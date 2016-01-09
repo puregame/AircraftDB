@@ -94,7 +94,7 @@ CREATE TABLE aviation.flights
   avg_alt integer,
   avg_speed smallint,
   sqk smallint,
-  station_id smallint,
+  station_id integer,
   alt_values integer[],
   CONSTRAINT flights_pkey PRIMARY KEY (session_uuid)
 )

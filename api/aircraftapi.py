@@ -103,10 +103,10 @@ def lastTimeFromSta():
 def crossRef():
     query = request.query
     try:
-        icao_id = query["icao_id"]
+        icao_id = int(query["icao_id"], 16)
+        db_response = connection.crossRefID(icao_id)
         if db_response != -1:
             response.content_type = 'application/json'
-            db_response = connection.crossRefID(icao_id)
             return dumps(db_response);
         else:
             return "Error: icao ID not found!"

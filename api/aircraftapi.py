@@ -32,6 +32,11 @@ def addNoteGet():
 def crossRef():
     return static_file('crossRef.html', root='html')
 
+@app.route('/help/lastTimeFromStation/')
+@app.route('/help/lastTimeFromStation')
+def lastTimeFromStationHelp():
+    return static_file('lastTimeFromStation.html', root='html')
+
 @app.route('/help/getStations/')
 @app.route('/help/getStations')
 def getSationsStatic():

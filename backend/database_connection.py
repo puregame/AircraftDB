@@ -62,7 +62,6 @@ class DB:
         self.cursor.execute("select timestamp from messages where station_id = %s order by timestamp desc limit 1", [station_id])
         # jsonify response
         data = self.cursor.fetchall();
-        self.apiLog.debug(data[0][0])
         return data[0][0];
 
     def getAircraft(self, icao_id):

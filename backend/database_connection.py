@@ -49,6 +49,7 @@ class DB:
             self.apiLog.error(e)
             cursor.close()
             return -1
+
     def crossRefCallsign(self, callsign):
         cursor = self.connection.cursor()
         try:
@@ -129,7 +130,7 @@ class DB:
 
         response = [{"length":len(data)}]
         for i in data:
-            response.append({"flight_number":i[0], "initial_time":self.asiso(i[1]), "final_time":self.asiso(i[2]), "avg_heading":i[3], "num_messages":i[4], "path":i[5], "avg_altitude":i[6], "avg_speed":i[7], "sqk":i[8], "station_id":i[9], "icao_id":str(hex(i[10]))[2:]})
+            response.append({"flight_number":i[0], "initial_time":self.asiso(i[1]), "final_time":self.asiso(i[2]), "avg_heading":i[3], "num_messages":i[4], "path":i[5], "avg_altitude":i[6], "avg_speed":i[7], "sqk":i[8], "station_id":i[9], "icao_id":str(hex(i[10]))[2:].upper()})
         cursor.close()
         return response;
 
@@ -139,7 +140,6 @@ class DB:
             cursor.execute("select flight_new_message(%(id)s::integer, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)"
                         , data)
             self.connection.commit()
-            cursor.close()
         except Exception,e :# should check for IntegrityError but that doesn't seem to work
             # if an exception happens here we just need to rollback the current transaction and restart it
             self.apiLog.error("** Couldn't insert into db! ** select flight_new_message(%(id)s::integer, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)")
@@ -147,7 +147,7 @@ class DB:
             cursor.execute("select flight_new_message(%(id)s::integer, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)"
                         , data)
             self.connection.commit()
-            cursor.close()
+        cursor.close()
 
     def updateAircraftDescription(self, icao_id, description):
         cursor = self.connection.cursor()

@@ -194,7 +194,7 @@ def newMessage():
     try: 
         # try to parse request 
         try:
-            data["icao_id"] = int(query["icao_id"], 16)#int(query["icao_id"], 16)
+            data["id"] = int(query["id"], 16)#int(query["id"], 16)
                 # opposite of this is str(hex(number))[2:]
             data["signal"] = query["signal"]
             data["time"] = query["time"]

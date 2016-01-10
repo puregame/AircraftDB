@@ -39,12 +39,13 @@ class DB:
     def crossRefID(self, _id):
         cursor = self.connection.cursor()
         try:
-            cursor.execute("select * from icao24plus_new where icao_hex = %s", [_id])
+            cursor.execute("select * from icao24plus_new where hex = %s", [_id])
             data = cursor.fetchall()
             return {"icao_id":str(hex((data[0][0])))[2:], "registration":data[1], "type":data[2], "long_description":data[3]}
+            cursor.close()
         except IndexError:
+            cursor.close()
             return -1
-        cursor.close()
 
     def crossRefCallsign(self, callsign):
         cursor = self.connection.cursor()

@@ -102,8 +102,8 @@ def lastTimeFromSta():
 @app.get('/crossRef')
 def crossRef():
     query = request.query
-    icao_id = query["icao_id"]
     try:
+        icao_id = query["icao_id"]
         if db_response != -1:
             response.content_type = 'application/json'
             return dumps(db_response);

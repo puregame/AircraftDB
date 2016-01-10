@@ -39,21 +39,23 @@ class DB:
     def crossRefID(self, _id):
         cursor = self.connection.cursor()
         try:
+            self.apiLog.debug("select * from icao24plus_new where hex = %s", _id)
             cursor.execute("select * from icao24plus_new where hex = %s", [_id])
             data = cursor.fetchall()
-            return {"icao_id":str(hex((data[0][0])))[2:], "registration":data[1], "type":data[2], "long_description":data[3]}
+            self.apiLog.debug(data)
             cursor.close()
-        except IndexError:
+            return {"icao_id":str(hex((data[0][0])))[2:].upper(), "registration":data[0][1], "type":data[0][2], "long_description":data[0][3]}
+        except IndexError, e:
+            self.apiLog.error(e)
             cursor.close()
             return -1
-
     def crossRefCallsign(self, callsign):
         cursor = self.connection.cursor()
         try:
             cursor.execute("select * from icao24plus_new where registration = %s", [callsign])
             data = cursor.fetchall()[0]
             cursor.close()
-            return {"icao_id":str(hex((data[0])))[2:], "registration":data[1], "type":data[2], "long_description":data[3]}
+            return {"icao_id":str(hex((data[0])))[2:].upper(), "registration":data[1], "type":data[2], "long_description":data[3]}
         except IndexError:
             cursor.close()
             return -1
@@ -86,7 +88,7 @@ class DB:
         data = cursor.fetchall();
         response = []
         for i in data:
-            response.append({"icao_id":str(hex(icao_id))[2:], "last_flight_number":i[0], "last_seen_at":self.asiso(i[1]), "avg_alt":i[2], "avg_speed":i[3], "last_position":i[4], "last_station":i[5], "total_flights":i[6], "user_notes":i[7]})
+            response.append({"icao_id":str(hex(icao_id))[2:].upper(), "last_flight_number":i[0], "last_seen_at":self.asiso(i[1]), "avg_alt":i[2], "avg_speed":i[3], "last_position":i[4], "last_station":i[5], "total_flights":i[6], "user_notes":i[7]})
         cursor.close()
         return response;
 
@@ -101,7 +103,7 @@ class DB:
 
         # jsonify response
         data = cursor.fetchall();
-        response = [{"icao_id":str(hex(icao_id))[2:], "length":len(data)}]
+        response = [{"icao_id":str(hex(icao_id))[2:].upper(), "length":len(data)}]
         for i in data:
             response.append({"flight_number":i[0], "initial_time":self.asiso(i[1]), "final_time":self.asiso(i[2]), "avg_heading":i[3], "num_messages":i[4], "path":i[5], "avg_altitude":i[6], "avg_speed":i[7], "sqk":i[8], "station_id":i[9]})
         cursor.close()

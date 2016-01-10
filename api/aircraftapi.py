@@ -74,7 +74,7 @@ def newMessageGet():
 def addNote():
     query=request.query
     try:
-        icao_hex = query["id"]
+        icao_hex = query["icao_id"]
         description = query["description"]
         connection.updateAircraftDescription(icao_hex, description)
     except ValueError, e:
@@ -131,7 +131,7 @@ def crossRef():
 def getAircraft():
     query = request.query
     response.content_type = 'application/json'
-    return dumps(connection.getAircraft(int(query["id"], 16)));
+    return dumps(connection.getAircraft(int(query["icao_id"], 16)));
 
 @app.get('/getFlights/')
 @app.get('/getFlights')
@@ -142,7 +142,7 @@ def getFlights():
         max_results = query["max_results"]
     except Exception, e:
         max_results = 0
-    return dumps(connection.getFlights(int(query["id"], 16), max_results))
+    return dumps(connection.getFlights(int(query["icao_id"], 16), max_results))
 
 @app.get('/getRecentFlights/')
 @app.get('/getRecentFlights')
@@ -195,7 +195,7 @@ def newMessage():
     try: 
         # try to parse request 
         try:
-            data["id"] = int(query["id"], 16)#int(query["id"], 16)
+            data["icao_id"] = int(query["icao_id"], 16)#int(query["icao_id"], 16)
                 # opposite of this is str(hex(number))[2:]
             data["signal"] = query["signal"]
             data["time"] = query["time"]

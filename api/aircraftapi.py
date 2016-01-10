@@ -103,14 +103,11 @@ def lastTimeFromSta():
 def crossRef():
     query = request.query
     icao_id = query["icao_id"]
-    db_response = connection.crossRefID(int(icao_id, 16))
-    return db_response
     try:
-        
-        # if db_response != -1:
-        #     response.content_type = 'application/json'
-        #     return dumps(db_response);
-        # else:
+        if db_response != -1:
+            response.content_type = 'application/json'
+            return dumps(db_response);
+        else:
         return "Error: icao ID not found!"
     except Exception, e:
         apiLog.error(e)

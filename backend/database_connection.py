@@ -151,7 +151,7 @@ class DB:
 
     def updateAircraftDescription(self, icao_id, description):
         cursor = self.connection.cursor()
-        cursor.execute("UPDATE aircraft_spotted set user_notes=%(note)s where icao_id=%(id)s", {'note':description, 'id':icao_id})
+        cursor.execute("UPDATE aircrafts set user_notes=%(note)s where icao_id=%(id)s", {'note':description, 'id':icao_id})
         self.connection.commit()
         cursor.close()
         # cursor.execute("UPDATE aircraft_spotted set user_notes=%(note)s where icao_id=%(id)s", {'note':description, 'id':icao_id})

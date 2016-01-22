@@ -74,7 +74,7 @@ def newMessageGet():
 def addNote():
     query=request.query
     try:
-        icao_hex = query["icao_id"]
+        icao_hex = int(query["icao_id"], 16)
         description = query["description"]
         connection.updateAircraftDescription(icao_hex, description)
     except ValueError, e:
@@ -184,7 +184,6 @@ def setStation():
     else:
         return "Station not update, ID probably in use!"
  
-
 @app.post('/newMessage')
 @app.post('/newMessage/')
 def newMessage():
@@ -243,6 +242,5 @@ def newMessage():
     # maybe get rid of logging the too soon messages?
     return "Message not put in DB, too soon"
     
-
 # listen on all network adapters on port 8090
 run(app, host="0.0.0.0", port="8090")

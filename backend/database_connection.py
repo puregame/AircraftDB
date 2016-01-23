@@ -7,6 +7,13 @@ import json
 from datetime import datetime
 localLog = logging.getLogger("database")
 
+def textToJson(text):
+    if text == "":
+        return []
+    else:
+        return json.loads(text)
+
+
 class DB:
     """docstring for DB"""
     def __init__(self):
@@ -68,7 +75,7 @@ class DB:
         data = cursor.fetchall();
         response = []
         for i in data:
-            response.append({"id":i[0], "description":i[1], "position":i[2], "date_added":self.asiso(i[3])})
+            response.append({"id":i[0], "description":i[1], "position":textToJson(i[2]), "date_added":self.asiso(i[3])})
         cursor.close()
         return response;
 
@@ -106,7 +113,7 @@ class DB:
         data = cursor.fetchall();
         response = [{"icao_id":str(hex(icao_id))[2:].upper(), "length":len(data)}]
         for i in data:
-            response.append({"flight_number":i[0], "initial_time":self.asiso(i[1]), "final_time":self.asiso(i[2]), "avg_heading":i[3], "num_messages":i[4], "path":json.loads(i[5]), "avg_altitude":i[6], "avg_speed":i[7], "sqk":i[8], "station_id":i[9]})
+            response.append({"flight_number":i[0], "initial_time":self.asiso(i[1]), "final_time":self.asiso(i[2]), "avg_heading":i[3], "num_messages":i[4], "path":textToJson(i[5]), "avg_altitude":i[6], "avg_speed":i[7], "sqk":i[8], "station_id":i[9]})
         cursor.close()
         return response;
 
@@ -130,7 +137,8 @@ class DB:
 
         response = [{"length":len(data)}]
         for i in data:
-            response.append({"flight_number":i[0], "initial_time":self.asiso(i[1]), "final_time":self.asiso(i[2]), "avg_heading":i[3], "num_messages":i[4], "path":json.loads(i[5]), "avg_altitude":i[6], "avg_speed":i[7], "sqk":i[8], "station_id":i[9], "icao_id":str(hex(i[10]))[2:].upper()})
+            response.append({"flight_number":i[0], "initial_time":self.asiso(i[1]), "final_time":self.asiso(i[2]), "avg_heading":i[3], "num_messages":i[4], "path":textToJson(i[5]), "avg_altitude":i[6], "avg_speed":i[7], "sqk":i[8], "station_id":i[9], "icao_id":str(hex(i[10]))[2:].upper()})
+
         cursor.close()
         return response;
 

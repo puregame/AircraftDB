@@ -8,7 +8,8 @@ from datetime import datetime
 localLog = logging.getLogger("database")
 
 def textToJson(text):
-    if text == "":
+    localLog.debug(text)
+    if text is None:
         return []
     else:
         return json.loads(text)

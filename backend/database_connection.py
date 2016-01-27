@@ -47,10 +47,8 @@ class DB:
     def crossRefID(self, _id):
         cursor = self.connection.cursor()
         try:
-            self.apiLog.debug("select * from icao24plus_new where hex = %s", _id)
             cursor.execute("select * from icao24plus_new where hex = %s", [_id])
             data = cursor.fetchall()
-            self.apiLog.debug(data)
             cursor.close()
             return {"icao_id":str(hex((data[0][0])))[2:].upper(), "registration":data[0][1], "type":data[0][2], "long_description":data[0][3]}
         except IndexError, e:
@@ -92,7 +90,6 @@ class DB:
         cursor = self.connection.cursor()
         #icao ID as integer
         cursor.execute("select last_flight_number, last_seen_at, avg_alt, avg_speed, st_asgeojson(last_position), last_station, total_flights, user_notes from aircrafts WHERE icao_id = %s", [icao_id])
-        self.apiLog.debug("select last_flight_number, last_seen_at, avg_alt, avg_speed, st_asgeojson(last_position), last_station, total_flights, user_notes from aircrafts WHERE icao_id = %s", [icao_id])
         # jsonify response
         data = cursor.fetchall();
         response = []

@@ -114,7 +114,6 @@ def crossRef():
         apiLog.error(e)
     try:
         callsign = query["callsign"]
-        apiLog.debug("trying to get callsign: " + str(callsign))
         db_response = connection.crossRefCallsign(callsign)
         if db_response != -1:
             response.content_type = 'application/json'
@@ -236,7 +235,6 @@ def newMessage():
         # Upload to database
         checker.performDBInsert(data)
         connection.newUserMessage(data)
-        apiLog.debug("Recieved valid message from: " + ip)
         return "Data accepted"
 
     # maybe get rid of logging the too soon messages?

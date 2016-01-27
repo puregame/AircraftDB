@@ -35,9 +35,8 @@ BEGIN
         END IF;
 
 		perform flight_new_flight(newuuid, _icao_hex, _flight_num, _alt, _speed, _heading, _signal_strength, _lat, _long, _mode, _sqk, _stationID, _time);
-	ELSIF exists(SELECT 1 from flights WHERE icao_id = _icao_hex AND final_time=(SELECT max(final_time) FROM flights WHERE icao_id=_icao_hex)) AND
-							(age(_time, final_time) < '10 minutes'::interval) from flights where final_time = (SELECT max(final_time)
-								FROM flights WHERE icao_id=_icao_hex)THEN
+	ELSIF exists(SELECT 1 from flights WHERE icao_id = _icao_hex AND final_time=(SELECT max(final_time) FROM flights WHERE icao_id=_icao_hex) AND
+							(age(_time, final_time) < '10 minutes'::interval))THEN
 		-- this message is part of a current flight
 		perform flight_update_flight(_icao_hex, _flight_num, _alt, _speed, _heading, _signal_strength, _lat, _long,_mode, _sqk, _time);
 		perform flight_update_aircraft(_icao_hex, _flight_num, _alt, _speed, _lat, _long, _stationID, _time);

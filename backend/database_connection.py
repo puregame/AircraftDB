@@ -149,6 +149,8 @@ class DB:
         except Exception,e :# should check for IntegrityError but that doesn't seem to work
             # if an exception happens here we just need to rollback the current transaction and restart it
             self.apiLog.error("** Couldn't insert into db! ** select flight_new_message(%(id)s::integer, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)")
+            self.apiLog.error("select flight_new_message(%(id)s::integer, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)"
+                        , data)
             self.connection.rollback()
             cursor.execute("select flight_new_message(%(id)s::integer, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)"
                         , data)

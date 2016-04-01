@@ -23,8 +23,8 @@ class DB:
 
     def newStation(self, data):
         cursor = self.connection.cursor()
-        self.apiLog.debug("select flight_add_station(%(station_id)s::integer, %(description)s::text, %(lat)s::double precision, %(lon)s::double precision);", data)
-        cursor.execute("select flight_add_station(%(station_id)s, %(description)s::text, %(lat)s::double precision, %(lon)s::double precision);"
+        self.apiLog.debug("select aviation.flight_add_station(%(station_id)s::integer, %(description)s::text, %(lat)s::double precision, %(lon)s::double precision);", data)
+        cursor.execute("select aviation.flight_add_station(%(station_id)s, %(description)s::text, %(lat)s::double precision, %(lon)s::double precision);"
             , data)
         self.connection.commit()
         if cursor.fetchone()[0] == 0:
@@ -47,7 +47,7 @@ class DB:
     def crossRefID(self, _id):
         cursor = self.connection.cursor()
         try:
-            cursor.execute("select * from icao24plus_new where hex = %s", [_id])
+            cursor.execute("select * from aviation.icao24plus_new where hex = %s", [_id])
             data = cursor.fetchall()
             cursor.close()
             return {"icao_id":str(hex((data[0][0])))[2:].upper(), "registration":data[0][1], "type":data[0][2], "long_description":data[0][3]}
@@ -59,7 +59,7 @@ class DB:
     def crossRefCallsign(self, callsign):
         cursor = self.connection.cursor()
         try:
-            cursor.execute("select * from icao24plus_new where registration = %s", [callsign])
+            cursor.execute("select * from aviation.icao24plus_new where registration = %s", [callsign])
             data = cursor.fetchall()[0]
             cursor.close()
             return {"icao_id":str(hex((data[0])))[2:].upper(), "registration":data[1], "type":data[2], "long_description":data[3]}
@@ -69,7 +69,7 @@ class DB:
 
     def getStations(self):
         cursor = self.connection.cursor()
-        cursor.execute("select station_id, description, st_asgeojson(position), added_on from stations")
+        cursor.execute("select station_id, description, st_asgeojson(position), added_on from aviation.stations")
         # jsonify response
         data = cursor.fetchall();
         response = []
@@ -80,7 +80,7 @@ class DB:
 
     def lastTimeFromStation(self, station_id):
         cursor = self.connection.cursor()
-        cursor.execute("select timestamp from messages where station_id = %s order by timestamp desc limit 1", [station_id])
+        cursor.execute("select timestamp from aviation.messages where station_id = %s order by timestamp desc limit 1", [station_id])
         # jsonify response
         data = cursor.fetchall();
         cursor.close()
@@ -89,7 +89,7 @@ class DB:
     def getAircraft(self, icao_id):
         cursor = self.connection.cursor()
         #icao ID as integer
-        cursor.execute("select last_flight_number, last_seen_at, avg_alt, avg_speed, st_asgeojson(last_position), last_station, total_flights, user_notes from aircrafts WHERE icao_id = %s", [icao_id])
+        cursor.execute("select last_flight_number, last_seen_at, avg_alt, avg_speed, st_asgeojson(last_position), last_station, total_flights, user_notes from aviation.aircrafts WHERE icao_id = %s", [icao_id])
         # jsonify response
         data = cursor.fetchall();
         response = []
@@ -101,11 +101,11 @@ class DB:
     def getFlights(self, icao_id, max_results):
         cursor = self.connection.cursor()
         if max_results == 0:
-            cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id from flights WHERE icao_id = %s", [icao_id])
-            self.apiLog.debug("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id from flights WHERE icao_id = %s", [icao_id])
+            cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id from aviation.flights WHERE icao_id = %s", [icao_id])
+            self.apiLog.debug("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id from aviation.flights WHERE icao_id = %s", [icao_id])
         else:
-            cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id from flights WHERE icao_id = %s LIMIT %s", [icao_id ,max_results])
-            # self.apiLog.debug("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id from flights WHERE icao_id = %s LIMIT %s", [icao_id, max_results])
+            cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id from aviation.flights WHERE icao_id = %s LIMIT %s", [icao_id ,max_results])
+            # self.apiLog.debug("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id from aviation.flights WHERE icao_id = %s LIMIT %s", [icao_id, max_results])
 
         # jsonify response
         data = cursor.fetchall();
@@ -123,13 +123,13 @@ class DB:
         ttime = str(max_time)+" minute"
         if station_id < 1:
             if max_results < 1:
-                cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id, icao_id from flights WHERE final_time > (now()-%s::interval)", [ttime])
+                cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id, icao_id from aviation.flights WHERE final_time > (now()-%s::interval)", [ttime])
             else:
-                cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id, icao_id from flights WHERE final_time>(now()-%s::interval) limit %s", [ttime, max_results])
+                cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id, icao_id from aviation.flights WHERE final_time>(now()-%s::interval) limit %s", [ttime, max_results])
         elif max_results < 1:
-            cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id, icao_id from flights WHERE final_time>(now()-%s::interval) AND station_id = %s", [ttime, station_id])
+            cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id, icao_id from aviation.flights WHERE final_time>(now()-%s::interval) AND station_id = %s", [ttime, station_id])
         else:
-            cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id, icao_id from flights WHERE final_time>(now()-%s::interval) AND station_id = %s limit %s", [ttime, station_id, max_results])
+            cursor.execute("select flight_number, initial_time, final_time, avg_heading, num_messages, st_asgeojson(path), avg_alt, avg_speed, sqk, station_id, icao_id from aviation.flights WHERE final_time>(now()-%s::interval) AND station_id = %s limit %s", [ttime, station_id, max_results])
         # jsonify response
         data = cursor.fetchall();
 
@@ -143,23 +143,23 @@ class DB:
     def newUserMessage(self, data):
         cursor = self.connection.cursor()
         try:
-            cursor.execute("select flight_new_message(%(id)s::integer, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)"
+            cursor.execute("select aviation.flight_new_message(%(id)s::integer, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)"
                         , data)
             self.connection.commit()
         except Exception,e :# should check for IntegrityError but that doesn't seem to work
             # if an exception happens here we just need to rollback the current transaction and restart it
-            self.apiLog.error("** Couldn't insert into db! ** select flight_new_message(%(id)s::integer, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)")
-            self.apiLog.error("select flight_new_message(%(id)s::integer, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)"
+            self.apiLog.error("** Couldn't insert into db! ** select aviation.flight_new_message(%(id)s::integer, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)")
+            self.apiLog.error("select aviation.flight_new_message(%(id)s::integer, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)"
                         , data)
             self.connection.rollback()
-            cursor.execute("select flight_new_message(%(id)s::integer, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)"
+            cursor.execute("select aviation.flight_new_message(%(id)s::integer, %(flight)s::text, %(altitude)s, %(speed)s::smallint, %(heading)s::smallint, %(signal)s::smallint, %(mode)s, %(lat)s::double precision, %(lon)s::double precision, %(sqk)s::smallint, %(station)s, %(time)s::timestamp with time zone)"
                         , data)
             self.connection.commit()
         cursor.close()
 
     def updateAircraftDescription(self, icao_id, description):
         cursor = self.connection.cursor()
-        cursor.execute("UPDATE aircrafts set user_notes=%(note)s where icao_id=%(id)s", {'note':description, 'id':icao_id})
+        cursor.execute("UPDATE aviation.aircrafts set user_notes=%(note)s where icao_id=%(id)s", {'note':description, 'id':icao_id})
         self.connection.commit()
         cursor.close()
         # cursor.execute("UPDATE aircraft_spotted set user_notes=%(note)s where icao_id=%(id)s", {'note':description, 'id':icao_id})

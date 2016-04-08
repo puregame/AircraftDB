@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION flight_add_station(
+CREATE OR REPLACE FUNCTION aviation.flight_add_station(
     _id integer,
     _description text,
     _lat double precision,
@@ -8,8 +8,8 @@ $BODY$
 DECLARE
   flight_uuid uuid;
 BEGIN
-  IF NOT exists(SELECT * from stations where station_id = _id) THEN
-    INSERT INTO stations VALUES (_id, _description, st_makepoint(_long, _lat), now());
+  IF NOT exists(SELECT * from aviation.stations where station_id = _id) THEN
+    INSERT INTO aviation.stations VALUES (_id, _description, st_makepoint(_long, _lat), now());
     return 1;
   END IF;
   return 0;

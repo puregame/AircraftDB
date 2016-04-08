@@ -1,4 +1,4 @@
-from bottle import Bottle, route, post, get, run, request, static_file, response
+from bottle import *
 from json import dumps
 import logging
 
@@ -22,50 +22,19 @@ def main_page():
     return static_file('index.html', root='html')
 
 ######## setup for static pages ############
-@app.route('/help/addNote')
-@app.route('/help/addNote/')
-def addNoteGet():
-    return static_file('addNote.html', root='html')
+# help html files
+@app.route('/help/<filename>')
+def serve_static(filename):
+    return static_file(filename, root='./html/help')
 
-@app.route('/help/crossRef')
-@app.route('/help/crossRef/')
-def crossRef():
-    return static_file('crossRef.html', root='html')
+# map files
+@app.route('/map')
+def map_func():
+    redirect('/map/gmap.html')
 
-@app.route('/help/lastTimeFromStation/')
-@app.route('/help/lastTimeFromStation')
-def lastTimeFromStationHelp():
-    return static_file('lastTimeFromStation.html', root='html')
-
-@app.route('/help/getStations/')
-@app.route('/help/getStations')
-def getSationsStatic():
-    return static_file('getStations.html', root='html')
-
-@app.route('/help/setStation/')
-@app.route('/help/setStation')
-def getSationsStatic():
-    return static_file('setStation.html', root='html')
-
-@app.route('/help/getAircraft/')
-@app.route('/help/getAircraft')
-def getSationsStatic():
-    return static_file('getAircraft.html', root='html')
-
-@app.route('/help/getFlights/')
-@app.route('/help/getFlights')
-def getSationsStatic():
-    return static_file('getFlights.html', root='html')
-
-@app.route('/help/getRecentFlights/')
-@app.route('/help/getRecentFlights')
-def getSationsStatic():
-    return static_file('getRecentFlights.html', root='html')
-
-@app.route("/help/newMessage")
-@app.route("/help/newMessage/")
-def newMessageGet():
-    return static_file('newMessage.html', root='html')
+@app.route('/map/<filepath:path>')
+def server_static(filepath):
+    return static_file(filepath, root='./html/htmlMap/')
 
 ######## end setup  for static pages ############
 # data input functions

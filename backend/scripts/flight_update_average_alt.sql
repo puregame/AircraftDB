@@ -2,7 +2,7 @@
 
 -- DROP FUNCTION flight_update_avg_alt();
 
-CREATE OR REPLACE FUNCTION flight_update_avg_alt()
+CREATE OR REPLACE FUNCTION aviation.flight_update_avg_alt()
   RETURNS integer AS
 $BODY$
 DECLARE
@@ -15,5 +15,5 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION flight_update_avg_alt()
+ALTER FUNCTION aviation.flight_update_avg_alt()
   OWNER TO postgres;

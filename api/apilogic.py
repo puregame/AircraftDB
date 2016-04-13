@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 
 ignoreDelay = 1 # time delay to ignore messages, in seconds
+cleanupDelay = 1 # time delay to celan up hex codes to ignore, in seconds
 
 class aircraftChecker():
     """Class to ensure all aircraft data is unique"""
@@ -19,7 +20,7 @@ class aircraftChecker():
         # DO NOT ignore messages that have a flight number, since this could be rare
         if data["flight"] != "":
             return True
-        if self.lastCleanup < (datetime.now()-timedelta(seconds=1)):
+        if self.lastCleanup < (datetime.now()-timedelta(seconds=cleanupDelay)):
             self.cleanupToIgnore()
             self.lastCleanup = datetime.now()
         # check each toIgnore aircraft against data, if aircraft is in list return false

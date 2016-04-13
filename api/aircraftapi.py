@@ -164,7 +164,8 @@ def newMessage():
             data["id"] = int(query["id"], 16)#int(query["id"], 16)
                 # opposite of this is str(hex(number))[2:]
             data["signal"] = query["signal"]
-            data["time"] = query["time"]
+            a = query["time"]
+            data["time"] = datetime.fromtimestamp(int(a//1000)).replace(microsecond=a%1000*1000)
             data["station"] = query["station"]
             data["mode"] = query["mode"]
         except KeyError, e:
